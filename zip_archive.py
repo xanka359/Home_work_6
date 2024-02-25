@@ -16,7 +16,7 @@ def test_check_pdf():    # тут начинается pdf
 
 def check_xlsx():    # тут начинается xlsx
     zip_ = 'resource/test.zip'
-    with zipfile.ZipFile(zip_, 'r') as zip_file:
+    with zipfile.ZipFile(zip_, 'r', zipfile.ZIP_DEFLATED) as zip_file:
         with zip_file.open('tmp/file_example_XLSX_50.xlsx') as zip_xlsx:
             workbook = load_workbook(zip_xlsx)
             sheet = workbook.active
@@ -37,10 +37,10 @@ def check_xlsx():    # тут начинается xlsx
 
 def check_xls():
         # тут начинается xls
-    with zipfile.ZipFile(zip_, 'r') as zip_file:
+    with zipfile.ZipFile(ZIP_PATH, 'r', zipfile.ZIP_DEFLATED) as zip_file:
         with zip_file.open('tmp/file_example_XLS_10.xls') as zip_xls:
             workbook1 = open_workbook(zip_xls)
-            text_xls = zip_.read(zip_xls)
+            text_xls = ZIP_PATH.read(zip_xls)
             count_xls = workbook1.nsheets
             name_xls = workbook1.sheet_names()
             sheet = workbook1.sheet_by_index(0)
