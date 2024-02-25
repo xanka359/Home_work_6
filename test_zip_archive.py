@@ -8,13 +8,15 @@ from io import BytesIO
 import csv
 from io import TextIOWrapper
 
+
 def test_check_pdf():    # тут начинается pdf
     with zipfile.ZipFile(ZIP_PATH, 'r', zipfile.ZIP_DEFLATED) as zp:
         with zp.open('Python Testing with Pytest (Brian Okken).pdf', 'r') as file:
             reader = PdfReader(file)
             total_count = len(reader.pages)
+            keyword = 'Ruiz'
+            assert any(keyword in page.extract_text() for page in reader.pages), f"Keyword '{keyword}' not found in PDF"
 
-        assert reader.__sizeof__() == 16
         assert total_count == 256
 
 def test_check_xlsx():    # тут начинается xlsx
@@ -60,7 +62,7 @@ def test_check_xls():
     assert count_col == 8
     assert value_3 == 'Nereida'
 
-def test_check_xls():
+def test_check_csv():
         # тут начинается csv
     with zipfile.ZipFile(ZIP_PATH, 'r', zipfile.ZIP_DEFLATED) as zip_file:
         with zip_file.open('file_example_csv_10.csv') as zip_csv:
