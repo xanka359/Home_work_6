@@ -3,7 +3,7 @@ import pytest, shutil
 from script_os import RESOURCE_DIR, TMP_DIR, ZIP_PATH
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='function',autouse=True)
 def manage_way():
     # Создаем папку resource, если её нет
     if not os.path.exists(RESOURCE_DIR):
