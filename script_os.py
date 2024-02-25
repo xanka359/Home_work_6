@@ -1,15 +1,11 @@
-import os.path
-import shutil
+import os
 
-CURRENT_FILE = os.path.abspath("test.zip")#__file__
 
-CURRENT_DIR = os.path.dirname(CURRENT_FILE)
+CURRENT_DIR = os.getcwd()
+TMP_DIR = os.path.join(CURRENT_DIR, 'tmp')
+RESOURCE_DIR = os.path.join(CURRENT_DIR, 'resource')
+ZIP_PATH = os.path.join(RESOURCE_DIR, 'test.zip')
 print(CURRENT_DIR)
-
-if not os.path.exists("resource"):
-    os.mkdir("resource")
-
-TMP_DIR = os.path.join(CURRENT_DIR, "resource")
 print(TMP_DIR)
-
-#shutil.rmtree(os.path.join(CURRENT_DIR, "resource"))
+print(RESOURCE_DIR)
+print(ZIP_PATH)

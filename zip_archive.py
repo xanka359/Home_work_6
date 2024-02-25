@@ -1,80 +1,55 @@
-import zipfile, os
-from zipfile import ZipFile
+import zipfile
 from pypdf import PdfReader
 import openpyxl
-
 from openpyxl import load_workbook
 from xlrd import open_workbook
+from script_os import ZIP_PATH
 
-from script_os import TMP_DIR
+def test_check_pdf():    # тут начинается pdf
+    with zipfile.ZipFile(ZIP_PATH, 'r', zipfile.ZIP_DEFLATED) as zp:
+        with zp.open('Python Testing with Pytest (Brian Okken).pdf', 'r') as file:
+            reader = PdfReader(file)
+            total_count = len(reader.pages)
 
-path = TMP_DIR
-file_dir = os.listdir(path)
+        assert reader.__sizeof__() == 16
+        assert total_count == 256
 
-with zipfile.ZipFile('resource/test.zip', mode='w', \
-                     compression=zipfile.ZIP_DEFLATED) as zf:
-    for file in file_dir:
-        add_file = os.path.join(path, file)
-        zf.write(add_file)
+def check_xlsx():    # тут начинается xlsx
+    zip_ = 'resource/test.zip'
+    with zipfile.ZipFile(zip_, 'r') as zip_file:
+        with zip_file.open('tmp/file_example_XLSX_50.xlsx') as zip_xlsx:
+            workbook = load_workbook(zip_xlsx)
+            sheet = workbook.active
+            wb = openpyxl.load_workbook(zip_xlsx)
+            length = len(wb.sheetnames)
+            sheet_xlsx = wb.sheetnames
+            row_count = sheet.max_row
+            column_count = sheet.max_column
+            value_1 = sheet.cell(row=51, column=8).value
+            value_2 = sheet.cell(row=2, column=2).value
 
-add_file = 'resource/test.zip'
+    assert length == 1
+    assert sheet_xlsx == "['Sheet1']"
+    assert row_count == 58
+    assert column_count == 8
+    assert value_1 == 6125
+    assert value_2 == 'Dulce'
 
-with zipfile.ZipFile('resource/test.zip', mode='a', \
-                     compression=zipfile.ZIP_DEFLATED) as zf:
-    zf.write(add_file, arcname='tmp/file_example_XLSX_50.xlsx')
-    zf.write(add_file, arcname='tmp/file_example_XLS_10.xls')
-    zf.write(add_file, arcname='tmp/Python Testing with Pytest (Brian Okken).pdf')
+def check_xls():
+        # тут начинается xls
+    with zipfile.ZipFile(zip_, 'r') as zip_file:
+        with zip_file.open('tmp/file_example_XLS_10.xls') as zip_xls:
+            workbook1 = open_workbook(zip_xls)
+            text_xls = zip_.read(zip_xls)
+            count_xls = workbook1.nsheets
+            name_xls = workbook1.sheet_names()
+            sheet = workbook1.sheet_by_index(0)
+            count_rows = sheet.nrows
+            count_col = sheet.ncols
+            value_3 = sheet.cell_value(rowx=5, colx=1)
 
-with zipfile.ZipFile('resource/test.zip', mode='a') as zf:
-    for file in zf.namelist():
-        print(file)
-
-zip_ = ZipFile('resource/test.zip')
-
-with ZipFile('resource/test.zip', 'r') as zip_file:
-    print(zip_file.namelist())
-
-    # тут начинается xlsx
-    text_xlsx = zip_.read('tmp/file_example_XLSX_50.xlsx')
-    workbook = load_workbook('tmp/file_example_XLSX_50.xlsx')
-    sheet = workbook.active
-    wb = openpyxl.load_workbook('tmp/file_example_XLSX_50.xlsx')
-    length = len(wb.sheetnames)
-    sheet_xlsx = wb.sheetnames
-    row_count = sheet.max_row
-    column_count = sheet.max_column
-
-    print(text_xlsx)
-    print(length)
-    print(sheet_xlsx)
-    print(row_count)
-    print(column_count)
-    print(sheet.cell(row=51, column=8).value)
-    print(sheet.cell(row=2, column=2).value)
-
-    # тут начинается xls
-    workbook1 = open_workbook("tmp/file_example_XLS_10.xls")
-    text_xls = zip_.read('tmp/file_example_XLS_10.xls')
-
-    print(text_xls)
-    print(workbook1.nsheets)
-    print(workbook1.sheet_names())
-
-    sheet = workbook1.sheet_by_index(0)
-    print(sheet.nrows)
-    print(sheet.ncols)
-    print(sheet.cell_value(rowx=5, colx=1))
-
-    # тут начинается pdf
-    reader = PdfReader('tmp/Python Testing with Pytest (Brian Okken).pdf')
-    print(len(reader.pages))
-    print(reader.pages[5])
-    print(reader.pages[255].extract_text())
-    print(os.path.getsize("tmp/Python Testing with Pytest (Brian Okken).pdf"))
-    print(reader.__sizeof__())
-
-    assert "this is the book for you" in reader.pages[255].extract_text()
-    assert os.path.getsize('tmp/Python Testing with Pytest (Brian Okken).pdf') == 3035139
-    assert reader.__sizeof__() == 16
-
-    zip_.close()
+    assert count_xls == 1
+    assert name_xls == "['Sheet1']"
+    assert count_rows == 10
+    assert count_col == 8
+    assert value_3 == 'Nereida'
